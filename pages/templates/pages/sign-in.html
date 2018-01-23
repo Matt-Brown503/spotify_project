@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    {% include 'pages/css.html' %}
 </head>
 <body>
-<div class="container">
+
+    <div class="container">
     <article id="main">
     <ol>
         {% for i in results %}
@@ -14,5 +16,6 @@
     </ol>
     </article>
 </div>
+{% include 'pages/js.html' %}
 </body>
 </html>

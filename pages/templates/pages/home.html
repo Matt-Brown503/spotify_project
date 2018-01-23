@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    {% include 'pages/css.html' %}
 </head>
 <body>
 <div class="container">
@@ -10,5 +11,6 @@
         <a href="{% url 'sign-in' %}">Sign In</a>
     </article>
 </div>
+{% include 'pages/js.html' %}
 </body>
 </html>
