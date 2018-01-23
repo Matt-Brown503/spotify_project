@@ -2521,35 +2521,50 @@ data2 = [{
 }]
 
 
-# # Get track album
-# print(data['track']['album']['name'])
-# # get track artist name
-# print(data['track']['album']['artists'][0]['name'])
-# # track name
-# print(data['track']['name'])
-# # artist ID
-# print(data['track']['album']['artists'][0]['id'])
-# # track id
-# print(data['track']['id'])
+## Get track album# print(data['track']['album']['name'])## get track artist name# print(data['track']['album']['artists'][0]['name'])## track name# print(data['track']['name'])## artist ID# print(data['track']['album']['artists'][0]['id'])## track id# print(data['track']['id'])
 
-# Get track album
-# print (data2[0]['items'][0]['track']['album']['name'])
-# print (data2[0]['items'][0]['track']['album']['artists'][0]['name'])
-# print (data2[0]['items'][0]['track']['name'])
-# print (data2[0]['items'][0]['track']['album']['artists'][0]['id'])
-# print (data2[0]['items'][0]['track']['id'])
+# Get track album# print(data2[0]['items'][0]['track']['album']['name'])# print(data2[0]['items'][0]['track']['album']['artists'][0]['name'])# print(data2[0]['items'][0]['track']['name'])# print(data2[0]['items'][0]['track']['album']['artists'][0]['id'])# print(data2[0]['items'][0]['track']['id'])
 
-# for items in data2:
-#     print(items)
+#
+for items in data2: #print(items)
 
-# print (data2[0]['items'][13]['track']['name'])
+# print(data2[0]['items'][13]['track']['name'])
 
 
 
 for i in data2:
     for tracks in i['items']:
-        print(tracks['track']['album']['name'])
-        print(tracks['track']['album']['artists'][0]['name'])
-        print(tracks['track']['name'])
-        print('********************************')
-        
+    print(tracks['track']['album']['name'])
+print(tracks['track']['album']['artists'][0]['name'])
+print(tracks['track']['name'])
+print('********************************')
+
+{
+    'external_urls': {
+        'spotify': 'https://open.spotify.com/artist/2CIMQHirSU0MQqyYHq0eOx'
+    },
+    'followers': {
+        'href': None,
+        'total': 1862704
+    },
+    'genres': ['big room', 'edm', 'electro house', 'progressive house'],
+    'href': 'https://api.spotify.com/v1/artists/2CIMQHirSU0MQqyYHq0eOx',
+    'id': '2CIMQHirSU0MQqyYHq0eOx',
+    'images': [{
+        'height': 640,
+        'url': 'https://i.scdn.co/image/86e8991077d6ce237be8f24dbc65e90f2e1f2a43',
+        'width': 640
+    }, {
+        'height': 320,
+        'url': 'https://i.scdn.co/image/cd362662352ce88b693b1a31cf5c9784730291dd',
+        'width': 320
+    }, {
+        'height': 160,
+        'url': 'https://i.scdn.co/image/70e010473dc0f158253111e035c71086fb7904fa',
+        'width': 160
+    }],
+    'name': 'deadmau5',
+    'popularity': 71,
+    'type': 'artist',
+    'uri': 'spotify:artist:2CIMQHirSU0MQqyYHq0eOx'
+}

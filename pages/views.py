@@ -4,6 +4,7 @@ import spotipy.util as util
 from spotipy import oauth2
 import json
 from pages.models import Track, Artist
+import ast
 scope = 'user-library-read'
 SPOTIPY_CLIENT_ID = 'b7bcf47cb6f246deae87280dc75f530d'
 SPOTIPY_CLIENT_SECRET = '7286c24d1a6e4d0d8e74f6846532318d'
@@ -72,20 +73,35 @@ def sign_in(request):
                 print('genre found, skipping')
                 print('*******')
                 Track.objects.filter(artist_id=tracks['track']['album']['artists'][0]['id']).update(genre=Track.objects.filter(artist_id=tracks['track']['album']['artists'][0]['id']).values('genre')[0]['genre'])
-                
-                # print(Track.objects.filter(album_id=tracks['track']['id']).values('genre')[0]['genre'])
-                
-                # Track.objects.filter(album_id=tracks['track']['id']).update(genre=Track.objects.filter(artist_id=tracks['track']['album']['artists'][0]['id']))
 
+    
+                    
+                
             else:
                 a_results = sp.artist(tracks['track']['album']['artists'][0]['id'])
                 print('Requesting genre from spotify')
                 print('*******')
-                Track.objects.filter(album_id=tracks['track']['id']).update(genre=a_results['genres'])
+                Track.objects.filter(album_id=tracks['track']['id']).update(genre=a_results['genre'])
                 
+    
+    genres = []           
+    genre_data = Track.objects.values('genre')
+    for entry in genre_data:
+        genres.append(ast.literal_eval(entry['genre']))
+        
+    g_list = [] 
+    for songs in genres:
+        for g in songs:
+            g_list.append(g)
 
-                
-            
+    print(g_list.count('hip hop'))
+    print(g_list.count('rap'))
+    print(g_list.count('alternative rock'))
+    print(g_list.count('rock'))
+    print(g_list.count('pop'))
+    print(g_list.count('indie rock'))
+    print(g_list.count('pop rap'))
+
     return render(request, 'pages/sign-in.html', {'results': tracks})
 
 
