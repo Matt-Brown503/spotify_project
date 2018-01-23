@@ -2,10 +2,12 @@ from django.shortcuts import render, HttpResponseRedirect
 import spotipy
 import spotipy.util as util
 from spotipy import oauth2
+import json
+from pages.models import Track, Artist
 scope = 'user-library-read'
-SPOTIPY_CLIENT_ID = ''
-SPOTIPY_CLIENT_SECRET = ''
-SPOTIPY_REDIRECT_URI = ''
+SPOTIPY_CLIENT_ID = 'b7bcf47cb6f246deae87280dc75f530d'
+SPOTIPY_CLIENT_SECRET = '7286c24d1a6e4d0d8e74f6846532318d'
+SPOTIPY_REDIRECT_URI = 'http://localhost:8000/after-sign-in/'
 username = ''
 # Create your views here.
 
@@ -50,7 +52,40 @@ def sign_in(request):
     for r in total:
         for track in r['items']:
             tracks.append(track)
+    
+    for i in total:
+        for tracks in i['items']:
+            if Track.objects.filter(album_id=tracks['track']['id']).count() == 1:
+                print('track data found, skipping') 
+            else:
+                print('track data not found, adding "{}"'.format(tracks['track']['name']))
+                Track.objects.create(
+                    name=tracks['track']['name'],
+                    artist=tracks['track']['album']['artists'][0]['name'],
+                    album=tracks['track']['album']['name'],
+                    artist_id=tracks['track']['album']['artists'][0]['id'],
+                    album_id=tracks['track']['id'],
+                    genre=''
+                )
 
+            if Track.objects.filter(artist_id=tracks['track']['album']['artists'][0]['id']).count() >= 1 and Track.objects.filter(artist_id=tracks['track']['album']['artists'][0]['id']).values('genre')[0]['genre'] != '': 
+                print('genre found, skipping')
+                print('*******')
+                Track.objects.filter(artist_id=tracks['track']['album']['artists'][0]['id']).update(genre=Track.objects.filter(artist_id=tracks['track']['album']['artists'][0]['id']).values('genre')[0]['genre'])
+                
+                # print(Track.objects.filter(album_id=tracks['track']['id']).values('genre')[0]['genre'])
+                
+                # Track.objects.filter(album_id=tracks['track']['id']).update(genre=Track.objects.filter(artist_id=tracks['track']['album']['artists'][0]['id']))
+
+            else:
+                a_results = sp.artist(tracks['track']['album']['artists'][0]['id'])
+                print('Requesting genre from spotify')
+                print('*******')
+                Track.objects.filter(album_id=tracks['track']['id']).update(genre=a_results['genres'])
+                
+
+                
+            
     return render(request, 'pages/sign-in.html', {'results': tracks})
 
 
