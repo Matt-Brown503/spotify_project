@@ -8,6 +8,7 @@ import ast
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from collections import Counter
 scope = 'user-library-read'
 SPOTIPY_CLIENT_ID = 'b7bcf47cb6f246deae87280dc75f530d'
 SPOTIPY_CLIENT_SECRET = '7286c24d1a6e4d0d8e74f6846532318d'
@@ -15,7 +16,9 @@ SPOTIPY_REDIRECT_URI = 'http://localhost:8000/after-sign-in/'
 username = ''
 # Create your views here.
 
-
+g_data = []
+g_labels = []
+g_values = []
 def next_offset(n):
     try:
         return int(n['next'].split('?')[1].split('&')[0].split('=')[1])
@@ -87,19 +90,24 @@ def sign_in(request):
     genre_data = Track.objects.values('genre')
     for entry in genre_data:
         genres.append(ast.literal_eval(entry['genre']))
-        
-    g_list = [] 
+    
     for songs in genres:
         for g in songs:
-            g_list.append(g)
+            g_data.append(g)
     
-    print(g_list.count('hip hop'))
-    print(g_list.count('rap'))
-    print(g_list.count('alternative rock'))
-    print(g_list.count('rock'))
-    print(g_list.count('pop'))
-    print(g_list.count('indie rock'))
-    print(g_list.count('pop rap'))
+    del g_labels[:]
+    del g_values[:]
+    x = Counter(g_data)
+    valid_genres = ["hip hop", "rock", "pop", "alternative rock", "classical", "rap", "pop rap"]
+    for word in valid_genres:
+        if word in x:
+            g_labels.append(word)
+            g_values.append(x[word])
+        else:
+            print('no')
+    print(g_values)
+    print(g_labels)
+
 
     return render(request, 'pages/sign-in.html',{'results': results['items']})
 
@@ -156,22 +164,13 @@ def after_sign_in(request):
                 Track.objects.filter(album_id=tracks['track']['id']).update(genre=a_results['genres'])
     return render(request, 'pages/sign-in.html',{'results': results['items']})
 
-def get_data(request, *args, **kwargs):
-    data = {
-        'sales': 100,
-        'customers': 10,
-    }
-    return JsonResponse(data)
-
 class ChartData(APIView):
     authentication_classes = []
     permission_classes = []
 
     def get(self, request, format=None):
-        labels = ["users", "Blue", "Yellow", "Green", "Purple", "Orange"]
-        default_items = [7, 10, 6, 4, 1, 9]
         data = {
-            'labels': labels,
-            'default': default_items,
+            'labels': g_labels,
+            'values': g_values,
         }
         return Response(data)
