@@ -1,19 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <div class="container">
-        {% block content%}
-        {% endblock content %}
-    </div>
-    {% include 'pages/js.html' %}
-    <script>
-    $(document).ready(function(){
-        {% block jquery %}{% endblock %}
-    })
-    </script>
-</body>
-</html>
+{% extends 'pages/base.html' %}
+
+{% block content}
+    <article id="main">
+    <ol>
+        {% for i in results %}
+            <li><a href="{{ i.track.external_urls.spotify }}">{{ i.track.name }}</a><br></li>
+        {% endfor %}
+    </ol>
+    </article>
+{% endblock content %}

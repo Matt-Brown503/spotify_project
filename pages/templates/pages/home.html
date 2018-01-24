@@ -1,16 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    {% include 'pages/css.html' %}
-</head>
-<body>
-<div class="container">
+{% extends 'pages/base.html' %}
+
+{% block content %}
     <article id="main">
         <a href="{% url 'sign-in' %}">Sign In</a>
     </article>
 </div>
-{% include 'pages/js.html' %}
-</body>
-</html>
+
+{% endblock content %}

@@ -5,6 +5,9 @@ from spotipy import oauth2
 import json
 from pages.models import Track, Artist
 import ast
+from django.http import JsonResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
 scope = 'user-library-read'
 SPOTIPY_CLIENT_ID = 'b7bcf47cb6f246deae87280dc75f530d'
 SPOTIPY_CLIENT_SECRET = '7286c24d1a6e4d0d8e74f6846532318d'
@@ -152,4 +155,23 @@ def after_sign_in(request):
                 print('*******')
                 Track.objects.filter(album_id=tracks['track']['id']).update(genre=a_results['genres'])
     return render(request, 'pages/sign-in.html',{'results': results['items']})
-# 
+
+def get_data(request, *args, **kwargs):
+    data = {
+        'sales': 100,
+        'customers': 10,
+    }
+    return JsonResponse(data)
+
+class ChartData(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, format=None):
+        labels = ["users", "Blue", "Yellow", "Green", "Purple", "Orange"]
+        default_items = [7, 10, 6, 4, 1, 9]
+        data = {
+            'labels': labels,
+            'default': default_items,
+        }
+        return Response(data)

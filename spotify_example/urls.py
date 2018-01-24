@@ -17,9 +17,13 @@ from django.contrib import admin
 from django.urls import path
 from pages import views as p_views
 
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', p_views.home, name='home'),
+    path('api/data/', p_views.get_data, name='api-data'),
+    path('api/chart/data/', p_views.ChartData.as_view()),
     path('sign-in/', p_views.sign_in, name='sign-in'),
     path('after-sign-in/', p_views.after_sign_in, name='after-sign-in'),
 ]
