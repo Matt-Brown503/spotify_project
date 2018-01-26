@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponseRedirect
 import spotipy
 import spotipy.util as util
-from spotipy import oauth2
+from pages import oauth2
 import json
 from pages.models import Track, Artist
 import ast
@@ -9,7 +9,8 @@ from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from collections import Counter
-scope = 'user-library-read'
+from colour import Color
+scope = 'user-library-read user-read-birthdate user-read-email'
 SPOTIPY_CLIENT_ID = 'b7bcf47cb6f246deae87280dc75f530d'
 SPOTIPY_CLIENT_SECRET = '7286c24d1a6e4d0d8e74f6846532318d'
 SPOTIPY_REDIRECT_URI = 'http://localhost:8000/after-sign-in/'
@@ -19,6 +20,7 @@ username = ''
 g_data = []
 g_labels = []
 g_values = []
+g_colors = []
 def next_offset(n):
     try:
         return int(n['next'].split('?')[1].split('&')[0].split('=')[1])
@@ -47,6 +49,8 @@ def sign_in(request):
     sp = spotipy.Spotify(auth=token_info['access_token'])
     total = []
     results = sp.current_user_saved_tracks(limit=50)
+    user_data = sp.me()
+    print(user_data)
     next = next_offset(results)
 
     total.append(results)
@@ -95,18 +99,71 @@ def sign_in(request):
         for g in songs:
             g_data.append(g)
     
-    del g_labels[:]
-    del g_values[:]
     x = Counter(g_data)
-    valid_genres = ["hip hop", "rock", "pop", "alternative rock", "classical", "rap", "pop rap"]
-    for word in valid_genres:
-        if word in x:
-            g_labels.append(word)
-            g_values.append(x[word])
-        else:
-            print('no')
-    print(g_values)
-    print(g_labels)
+    pop_genre = ['folk-pop', 'latin-pop', 'synthpop', 'teen pop', 'korean pop', 'german pop', 'j-pop', 'dance pop']
+    rap_genre = ['trap music', 'southern hip hop', 'pop rap', 'west coast rap', 'hardcore hip hop', 'deep undeground hip hop', 'alternative hip hop', 'french hip hop']
+    rock_genre = ['modern rock', 'classic rock', 'pop rock', 'alternative rock', 'soft rock', 'indie rock', 'folk rock', 'blues-rock', 'southern rock', 'christian alternative rock', 'country rock', 'glam rock']
+    classical = ['modern classical', 'baroque', 'classical guitar']
+    jazz = ['bebop', 'swing', 'acid jazz', 'big band']
+    edm = ['chillwave', 'chiptune', 'house', 'electronic', 'downtempo', 'trip hop', 'trance', 'electro swing']
+    metal = ['black metal', 'alternative metal', 'glam metal',]
+    punk = ['garage punk', 'pop punk', 'skate punk', 'indie punk']
+    
+    
+
+    valid_genres = ['r&b', 'folk', 'reggae', 'salsa', 'latin', 'ambient', 'country', 'soul', 'funk',  'blues', 'emo', 'soundtrack', 'bossa nova', 'world']
+    
+    del g_labels [:]
+    del g_values [:]
+    del g_colors [:] 
+
+    def colorPicker(fcolor, lcolor, count):
+        start = Color(fcolor)
+        c = list(start.range_to(Color(lcolor), count))
+        for i in c:
+            print(i.hex)
+            g_colors.append(i.hex)
+    
+    def dataBuilder(clist, fcolor, lcolor):
+        count = 0
+        for word in clist:
+            if word in x:
+                g_labels.append(word)
+                g_values.append(x[word])
+                count += 1
+            else:
+                print('genre not found in track list')
+        colorPicker(fcolor, lcolor, count)
+        print(count)
+    
+
+    dataBuilder(rock_genre, 'red', '#ff7c7c')
+    dataBuilder(pop_genre, 'blue', '#7c81ff')
+    dataBuilder(rap_genre, 'green', '#ccffd7')
+
+    # colorPicker(rap_genre, 'purple', 'dark purple')
+    # colorPicker(rock_genre, 'white', 'black')
+    # colorPicker(classical, 'blue', 'yellow')
+    # colorPicker(jazz_genre, 'blue', 'yellow')
+    # colorPicker(edm_genre, 'blue', 'yellow')
+    # colorPicker(metal_genre, 'blue', 'yellow')
+    # colorPicker(punk_genre, 'blue', 'yellow')
+    # colorPicker(punk_genre, 'blue', 'yellow')
+    
+
+    
+
+    # for word in pop_genre:
+    #     if word in x:
+    #         g_labels.append(word)
+    #         g_values.append(x[word])
+    #         colorPicker(pop_genre, '#0008ff', '#000000')
+    #     else:
+    #         print('genre not found in track list')
+    
+    # print(g_values)
+    # print(g_labels)
+    # print(x)
 
 
     return render(request, 'pages/sign-in.html',{'results': results['items']})
@@ -172,5 +229,6 @@ class ChartData(APIView):
         data = {
             'labels': g_labels,
             'values': g_values,
+            'colors': g_colors,
         }
         return Response(data)

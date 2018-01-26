@@ -121,3 +121,5 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'pages', 'static')
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+LOGIN_REDIRECT_URL = 'home'
+AUTH_USER_MODEL = 'pages.User'

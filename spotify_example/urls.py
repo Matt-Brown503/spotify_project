@@ -16,12 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from pages import views as p_views
+from django.contrib.auth import views as auth_views
+
 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', p_views.home, name='home'),
+    path('login/', auth_views.login, {'template_name': 'pages/login.html'}, name='login'),
+    path('logout/', auth_views.logout, {'next_page': '/'}, name='logout'),
     path('api/chart/data/', p_views.ChartData.as_view()),
     path('sign-in/', p_views.sign_in, name='sign-in'),
     path('after-sign-in/', p_views.after_sign_in, name='after-sign-in'),
